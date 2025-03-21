@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-xs!#n28hf(am*3lg_qss!09at5w%__d4y0+q#bjbsm%_m3i5te
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["blog.onrender.com", "localhost"]
+ALLOWED_HOSTS = ["blog.onrender.com", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -131,28 +131,32 @@ LOGOUT_REDIRECT_URL = '/'
 
 # Email settings for development (prints emails to console)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = 'Django Mini Blog <noreply@miniblog.example.com>'
 
-
-
-
-
-
-
-
-
-
-import dj_database_url
+# Production settings - only apply in production environment
 import os
-
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-DATABASES = {
-    'default': dj_database_url.config(default=os.getenv("DATABASE_URL"))
-}
+# Only use dj_database_url in production (when DATABASE_URL is set)
+if os.getenv("DATABASE_URL"):
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(default=os.getenv("DATABASE_URL"))
+    }
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add this line
-    ...
-]
+# Add whitenoise middleware only if installed
+try:
+    import whitenoise
+    # Find the index of the security middleware
+    security_middleware_index = MIDDLEWARE.index('django.middleware.security.SecurityMiddleware')
+    # Insert whitenoise middleware after security middleware
+    if 'whitenoise.middleware.WhiteNoiseMiddleware' not in MIDDLEWARE:
+        MIDDLEWARE.insert(security_middleware_index + 1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+except ImportError:
+    pass  # whitenoise not installed, no need to add middleware

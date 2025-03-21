@@ -23,11 +23,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
     path('blog/', include('blog.urls')),
-    # Keep these for backward compatibility but mark them for deprecation
-    path('login/', auth_views.LoginView.as_view(template_name='blog/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='blog/logout.html'), name='logout'),
-    # Standard auth URLs
+    
+    # Authentication URLs
     path('accounts/', include('django.contrib.auth.urls')),
-    # Registration URL
     path('register/', views.register, name='register'),
+    
+    # For compatibility - redirect to the standard auth views
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login_old'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='registration/logged_out.html'), name='logout_old'),
 ]
