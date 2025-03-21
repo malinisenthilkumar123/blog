@@ -1,0 +1,206 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="blogger-profile mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 80px; height: 80px; font-size: 2rem; flex-shrink: 0;">
+                            {{ author.username|slice:":1"|upper }}
+                        </div>
+                        <div>
+                            <h1 class="display-6 mb-1">{{ author.username }}</h1>
+                            <div class="text-muted d-flex align-items-center">
+                                <i class="fas fa-user-clock me-2"></i> Member since {{ author.date_joined|date:"F d, Y" }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4 text-center mb-3 mb-md-0">
+                            <div class="stat-card py-2">
+                                <div class="h3 mb-0">{{ posts.count }}</div>
+                                <div class="small text-muted">Post{{ posts.count|pluralize }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center mb-3 mb-md-0">
+                            <div class="stat-card py-2">
+                                {% with comment_count=0 %}
+                                    {% for post in posts %}
+                                        {% with comment_count=comment_count|add:post.comments.count %}{% endwith %}
+                                    {% endfor %}
+                                    <div class="h3 mb-0">{{ comment_count }}</div>
+                                    <div class="small text-muted">Comment{{ comment_count|pluralize }}</div>
+                                {% endwith %}
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="stat-card py-2">
+                                <div class="h3 mb-0">{{ author.date_joined|date:"M Y" }}</div>
+                                <div class="small text-muted">Joined</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="blogger-bio p-3 bg-light rounded">
+                        <p class="mb-0">
+                            <i class="fas fa-quote-left text-primary me-2 opacity-50"></i>
+                            {{ author.username }} is a valued contributor to our blog community.
+                            {% if author.email %}
+                                Contact them at <a href="mailto:{{ author.email }}">{{ author.email }}</a>.
+                            {% endif %}
+                            <i class="fas fa-quote-right text-primary ms-2 opacity-50"></i>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h3 mb-0">
+                <i class="fas fa-file-alt me-2"></i>Posts by {{ author.username }}
+                <span class="badge bg-primary ms-2">{{ posts.count }}</span>
+            </h2>
+            <a href="{% url 'post_list' %}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-th-list me-1"></i> All Posts
+            </a>
+        </div>
+        
+        {% if posts %}
+            <div class="post-list">
+                {% for post in posts %}
+                    <div class="card mb-3 post-list-item">
+                        <div class="card-body py-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{% url 'post_detail' post.id %}" class="h5 card-title mb-0 me-2 text-decoration-none stretched-link">
+                                    {{ post.title }}
+                                </a>
+                                <div class="text-nowrap" style="flex-shrink: 0;">
+                                    <small class="text-muted">
+                                        <i class="far fa-calendar-alt me-1"></i>{{ post.date_posted|date:"M d, Y" }}
+                                    </small>
+                                    {% if post.comments.count > 0 %}
+                                        <span class="badge bg-light text-primary ms-2">
+                                            <i class="far fa-comment me-1"></i>{{ post.comments.count }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i> This blogger hasn't posted any articles yet.
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-user-circle me-2"></i>About {{ author.username }}
+            </div>
+            <div class="card-body">
+                <p>{{ author.username }} has been writing on our blog since {{ author.date_joined|date:"F Y" }}.</p>
+                <p class="mb-0">Check out their latest posts to see what they've been writing about!</p>
+            </div>
+        </div>
+        
+        {% if posts %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-star me-2"></i>Latest from {{ author.username }}
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for post in posts|slice:":3" %}
+                            <a href="{% url 'post_detail' post.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                                <div>{{ post.title }}</div>
+                                <span class="badge bg-light text-primary">{{ post.date_posted|date:"M d" }}</span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie me-2"></i>Post Activity
+                </div>
+                <div class="card-body">
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar bg-primary activity-bar" role="progressbar" 
+                             data-posts="{{ posts.count }}"
+                             aria-valuenow="{{ posts.count }}" aria-valuemin="0" aria-valuemax="10">
+                            {{ posts.count }} post{{ posts.count|pluralize }}
+                        </div>
+                    </div>
+                    <div class="small text-muted text-center mt-2">
+                        Blogger activity level
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        border-radius: 10px;
+        background-color: rgba(108, 92, 231, 0.05);
+        transition: transform 0.2s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-3px);
+        background-color: rgba(108, 92, 231, 0.1);
+    }
+    
+    .post-list-item {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-left: 4px solid transparent;
+    }
+    
+    .post-list-item:hover {
+        transform: translateX(5px);
+        border-left: 4px solid var(--primary-color);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .blogger-bio {
+        position: relative;
+    }
+    
+    .blogger-bio::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 4px;
+        background-color: var(--primary-color);
+        border-radius: 4px 0 0 4px;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const activityBar = document.querySelector('.activity-bar');
+        if (activityBar) {
+            const posts = parseInt(activityBar.dataset.posts);
+            const width = Math.min((posts / 10) * 100, 100);
+            activityBar.style.width = width + '%';
+        }
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,60 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <h1 class="mb-4">All Bloggers</h1>
+        
+        {% if bloggers %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        {% for blogger in bloggers %}
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            {{ blogger.username|slice:":1"|upper }}
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h5 class="mt-0">
+                                            <a href="{% url 'blogger_detail' blogger.id %}" class="text-decoration-none">{{ blogger.username }}</a>
+                                        </h5>
+                                        <small class="text-muted">{{ blogger.post_count }} post{{ blogger.post_count|pluralize }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                No bloggers found.
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">About Our Bloggers</div>
+            <div class="card-body">
+                <p>Our blog features a diverse group of writers who share their expertise and perspectives.</p>
+                <p>Each blogger brings their unique voice and knowledge to our platform.</p>
+                <p>Click on a blogger's name to see their profile and all their posts.</p>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">Want to Become a Blogger?</div>
+            <div class="card-body">
+                <p>If you're interested in contributing to our blog, please contact us!</p>
+                <p>We're always looking for passionate writers to join our community.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

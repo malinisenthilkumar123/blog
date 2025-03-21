@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DIY Django Mini Blog{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --text-color: #2d3436;
+            --muted-color: #636e72;
+            --border-color: #dfe6e9;
+        }
+        
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            background-color: #f9f9f9;
+            line-height: 1.6;
+        }
+        
+        .container {
+            background-color: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .site-header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .site-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+        
+        .site-title:hover {
+            color: var(--accent-color);
+        }
+        
+        .nav-link {
+            color: var(--text-color);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background-color: var(--light-color);
+            color: var(--primary-color);
+        }
+        
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            color: var(--muted-color);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .sidebar-heading {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: var(--light-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 10px 10px 0 0 !important;
+            padding: 0.75rem 1.25rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #5b52d3;
+            border-color: #5b52d3;
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        a:hover {
+            color: var(--accent-color);
+        }
+        
+        .list-group-item {
+            border: none;
+            padding: 0.75rem 1rem;
+            background-color: transparent;
+        }
+        
+        .list-group-item:hover {
+            background-color: var(--light-color);
+        }
+        
+        .blogger-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .blogger-avatar {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        @media (max-width: 767.98px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .sidebar {
+                position: static;
+                margin-bottom: 2rem;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <header class="site-header">
+            <div class="row flex-nowrap justify-content-between align-items-center py-3">
+                <div class="col-md-4">
+                    <a href="{% url 'home' %}" class="text-decoration-none">
+                        <h1 class="site-title display-6">
+                            <i class="fas fa-blog me-2"></i>DIY Django Mini Blog
+                        </h1>
+                    </a>
+                </div>
+                <div class="col-md-8 d-flex justify-content-end align-items-center">
+                    <nav class="nav me-3 d-none d-md-flex">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                        <a class="nav-link" href="{% url 'post_list' %}">
+                            <i class="fas fa-file-alt me-1"></i>All Blogs
+                        </a>
+                        <a class="nav-link" href="{% url 'bloggers_list' %}">
+                            <i class="fas fa-users me-1"></i>Bloggers
+                        </a>
+                    </nav>
+                    {% if user.is_authenticated %}
+                        <div class="dropdown me-2">
+                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user me-1"></i>{{ user.username }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'password_change' %}">
+                                    <i class="fas fa-key me-1"></i>Change Password
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                                </a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-sm btn-outline-primary me-2">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                    {% endif %}
+                    <a href="/admin/" class="btn btn-sm btn-primary">
+                        <i class="fas fa-cog me-1"></i>Admin
+                    </a>
+                </div>
+            </div>
+            <!-- Mobile navigation -->
+            <div class="d-md-none mt-2 mb-3">
+                <div class="btn-group d-flex" role="group">
+                    <a href="{% url 'home' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-home"></i>
+                    </a>
+                    <a href="{% url 'post_list' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-file-alt"></i>
+                    </a>
+                    <a href="{% url 'bloggers_list' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-users"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="row mt-4">
+            <!-- Sidebar with bloggers list -->
+            <div class="col-md-3">
+                <div class="sidebar">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-users me-1"></i> Our Bloggers
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                {% for blogger in bloggers %}
+                                    <li class="mb-2 blogger-item">
+                                        <div class="blogger-avatar">
+                                            {{ blogger.username|slice:":1"|upper }}
+                                        </div>
+                                        <a href="{% url 'blogger_detail' blogger.id %}" class="text-decoration-none">
+                                            {{ blogger.username }}
+                                        </a>
+                                    </li>
+                                {% empty %}
+                                    <li>
+                                        <a href="{% url 'bloggers_list' %}" class="text-decoration-none">View All Bloggers</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <a href="{% url 'bloggers_list' %}" class="btn btn-sm btn-primary d-block mt-2">
+                                <i class="fas fa-users me-1"></i> View All Bloggers
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional sidebar content -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-info-circle me-1"></i> About
+                        </div>
+                        <div class="card-body">
+                            <p class="small mb-0">
+                                This is a DIY mini blog project built with Django. Share your thoughts and connect with other bloggers!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main content area -->
+            <div class="col-md-9">
+                {% if messages %}
+                    <div class="messages mb-4">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <main>
+                    {% block content %}{% endblock %}
+                </main>
+            </div>
+        </div>
+
+        <footer class="footer text-center">
+            <p>
+                <i class="fas fa-copyright me-1"></i> {% now "Y" %} DIY Django Mini Blog
+                <span class="mx-2">|</span>
+                Built with <i class="fas fa-heart text-danger"></i> using Django
+            </p>
+        </footer>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 
