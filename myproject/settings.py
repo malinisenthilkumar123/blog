@@ -12,5 +12,3 @@ from miniblog.settings import * # type: ignore
 # For example:
 # DEBUG = True 
 
-ALLOWED_HOSTS = ["django-assesment-9.onrender.com", "localhost", "127.0.0.1"]
-CSRF_TRUSTED_ORIGINS = ["https://django-assesment-9.onrender.com"]
