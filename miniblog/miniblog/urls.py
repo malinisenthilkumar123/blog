@@ -17,12 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from django.views.generic import RedirectView
 from blog import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
     path('blog/', include('blog.urls')),
+    
+    # Redirect /catalog/ to the blog homepage
+    path('catalog/', RedirectView.as_view(url='/blog/', permanent=True)),
     
     # Authentication URLs
     path('accounts/', include('django.contrib.auth.urls')),

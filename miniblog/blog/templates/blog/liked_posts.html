@@ -1,0 +1,115 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Posts You Like{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0"><i class="fas fa-heart me-2 text-danger"></i>Posts You Like</h1>
+</div>
+
+{% if posts %}
+    <div class="post-list">
+        {% for post in posts %}
+            <div class="card post-card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-3">
+                        <a href="{% url 'post_detail' post.id %}" class="text-decoration-none">{{ post.title }}</a>
+                    </h2>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px; flex-shrink: 0;">
+                            {{ post.author.username|slice:":1"|upper }}
+                        </div>
+                        <div class="small text-muted">
+                            By <a href="{% url 'blogger_detail' post.author.id %}" class="text-decoration-none fw-bold">{{ post.author.username }}</a>
+                            <span class="mx-1">•</span>
+                            <span><i class="far fa-calendar-alt me-1"></i>{{ post.date_posted|date:"F d, Y" }}</span>
+                            {% if post.comments.count > 0 %}
+                                <span class="mx-1">•</span>
+                                <span><i class="far fa-comment me-1"></i>{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</span>
+                            {% endif %}
+                            <span class="mx-1">•</span>
+                            <span><i class="fas fa-heart me-1 text-danger"></i>{{ post.likes.count }} like{{ post.likes.count|pluralize }}</span>
+                        </div>
+                    </div>
+                    <p class="card-text">{{ post.content|truncatewords:40|linebreaks }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <a href="{% url 'post_detail' post.id %}" class="btn btn-outline-primary btn-sm">
+                                Read More <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                            <a href="{% url 'like_post' post.id %}" class="btn btn-danger btn-sm ms-2 unlike-button" data-post-id="{{ post.id }}">
+                                <i class="fas fa-heart-broken me-1"></i>Unlike
+                            </a>
+                        </div>
+                        {% if post.comments.count > 0 %}
+                            <span class="badge bg-light text-primary">
+                                <i class="far fa-comments me-1"></i> {{ post.comments.count }}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>You haven't liked any posts yet.
+    </div>
+    <p class="lead">
+        Explore our <a href="{% url 'post_list' %}" class="text-decoration-none">blog posts</a> and like the ones you enjoy!
+    </p>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const unlikeButtons = document.querySelectorAll('.unlike-button');
+        
+        unlikeButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const postId = this.getAttribute('data-post-id');
+                const postCard = this.closest('.post-card');
+                
+                // Send AJAX request
+                fetch(`/post/${postId}/like/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Response received:", data);
+                    // Remove card from list
+                    if (!data.liked) {
+                        postCard.style.opacity = '0';
+                        setTimeout(() => {
+                            postCard.remove(); // Use remove() instead of changing display
+                            
+                            // Check if there are no more posts
+                            const remainingPosts = document.querySelectorAll('.post-card');
+                            if (remainingPosts.length === 0) {
+                                location.reload(); // Reload to show empty state
+                            }
+                        }, 300);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // If AJAX fails, follow the link normally
+                    window.location.href = button.getAttribute('href');
+                });
+            });
+        });
+    });
+</script>
+<style>
+    .post-card {
+        transition: opacity 0.3s ease;
+    }
+</style>
+{% endblock %} 
