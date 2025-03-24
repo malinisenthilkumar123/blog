@@ -10,6 +10,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "your-default-secret-key")  # Use a safe de
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "blog.onrender.com localhost 127.0.0.1").split()
+ALLOWED_HOSTS = ['djangoassesment.onrender.com']
 
 # Installed apps
 INSTALLED_APPS = [
