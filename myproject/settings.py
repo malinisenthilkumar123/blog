@@ -12,4 +12,4 @@ from miniblog.settings import * # type: ignore
 # For example:
 # DEBUG = True 
 
-ALLOWED_HOSTS = ['malini.pythonanywhere.com']
+ALLOWED_HOSTS = ['malini.pythonanywhere.com','127.0.0.1']
