@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">{{ welcome_message }}</h1>
+    <p class="lead">Share your thoughts and connect with other bloggers.</p>
+    <hr class="my-4">
+    {% if user.is_authenticated %}
+        <p>Welcome back, {{ user.username }}!</p>
+        <a class="btn btn-primary btn-lg" href="{% url 'post_create' %}" role="button">Create New Post</a>
+    {% else %}
+        <p>Join our community today!</p>
+        <a class="btn btn-primary btn-lg" href="{% url 'register' %}" role="button">Register</a>
+        <a class="btn btn-outline-primary btn-lg" href="{% url 'login' %}" role="button">Login</a>
+    {% endif %}
+</div>
+
+{% if bloggers %}
+<div class="mt-5">
+    <h2>Our Bloggers</h2>
+    <div class="row">
+        {% for blogger in bloggers %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ blogger.username }}</h5>
+                    <p class="card-text">Posts: {{ blogger.post_set.count }}</p>
+                    <a href="{% url 'blogger_detail' blogger.id %}" class="btn btn-outline-primary">View Profile</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if user.is_authenticated and liked_posts %}
+<div class="mt-5">
+    <h2>Your Recently Liked Posts</h2>
+    <div class="row">
+        {% for post in liked_posts %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">{{ post.content|truncatewords:30 }}</p>
+                    <a href="{% url 'post_detail' post.id %}" class="btn btn-outline-primary">Read More</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %} 

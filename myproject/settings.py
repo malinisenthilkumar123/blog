@@ -12,4 +12,4 @@ from miniblog.settings import * # type: ignore
 # For example:
 # DEBUG = True 
 
-ALLOWED_HOSTS = ['djangoassesment.onrender.com']
+# ALLOWED_HOSTS = ['djangoassesment.onrender.com']

@@ -5,12 +5,13 @@ import dj_database_url
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security - use environment variables
-SECRET_KEY = os.getenv("SECRET_KEY", "your-default-secret-key")  # Use a safe default
-DEBUG = os.getenv("DEBUG", "False") == "True"
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-your-secret-key-here'
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "blog.onrender.com localhost 127.0.0.1").split()
-ALLOWED_HOSTS = ['djangoassesment.onrender.com']
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = []
 
 # Installed apps
 INSTALLED_APPS = [
@@ -20,7 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blog',
+    'blog.apps.BlogConfig',
     'whitenoise.runserver_nostatic',  # Ensure whitenoise is installed
 ]
 
